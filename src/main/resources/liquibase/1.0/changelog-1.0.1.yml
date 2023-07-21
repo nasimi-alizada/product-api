@@ -1,0 +1,45 @@
+databaseChangeLog:
+  - changeSet:
+      id: create Product Table
+      author: Nasimi Alizadeh
+      changes:
+        - createTable:
+            tableName: products
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: name
+                  type: varchar(32)
+                  remarks: name of product
+                  constraints:
+                    nullable: false
+              - column:
+                  name: description
+                  type: varchar(256)
+                  remarks: description of product
+              - column:
+                  name: price
+                  type: decimal(10, 2)
+                  remarks: price of product
+              - column:
+                  name: status
+                  type: varchar(16)
+                  remarks: status of product
+              - column:
+                  name: created_at
+                  type: timestamp
+                  remarks: When the record product
+              - column:
+                  name: updated_at
+                  type: timestamp
+                  remarks: Automatic update of timestamp on each update
+
+
+
+
