@@ -1,8 +1,11 @@
 package com.example.marketapijpa.controller;
 
+import com.example.marketapijpa.model.criteria.PageCriteria;
+import com.example.marketapijpa.model.criteria.ProductCriteria;
 import com.example.marketapijpa.model.request.PatchProductRequest;
 import com.example.marketapijpa.model.request.ProductRequest;
 import com.example.marketapijpa.model.request.UpdateProductRequest;
+import com.example.marketapijpa.model.response.PageableProductResponse;
 import com.example.marketapijpa.model.response.ProductResponse;
 import com.example.marketapijpa.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -26,8 +29,9 @@ public class ProductController {
     }
 
     @GetMapping
-    public List<ProductResponse> getProducts() {
-        return productService.getProducts();
+    public PageableProductResponse getProducts(PageCriteria pageCriteria,
+                                               ProductCriteria productCriteria) {
+        return productService.getProducts(pageCriteria, productCriteria);
     }
 
     @PostMapping

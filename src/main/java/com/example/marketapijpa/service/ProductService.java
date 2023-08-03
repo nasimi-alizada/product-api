@@ -3,12 +3,18 @@ package com.example.marketapijpa.service;
 import com.example.marketapijpa.dao.entity.ProductEntity;
 import com.example.marketapijpa.dao.repository.ProductRepository;
 import com.example.marketapijpa.mapper.ProductMapper;
+import com.example.marketapijpa.model.criteria.PageCriteria;
+import com.example.marketapijpa.model.criteria.ProductCriteria;
 import com.example.marketapijpa.model.request.PatchProductRequest;
 import com.example.marketapijpa.model.request.ProductRequest;
+import com.example.marketapijpa.model.response.PageableProductResponse;
 import com.example.marketapijpa.model.response.ProductResponse;
 import com.example.marketapijpa.model.request.UpdateProductRequest;
+import com.example.marketapijpa.service.specification.ProductSpecification;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -34,11 +40,14 @@ public class ProductService {
         return buildProductResponse(product);
     }
 
-    public List<ProductResponse> getProducts() {
-        return productRepository.findAll().stream()
-                .map(ProductMapper::buildProductResponse)
-                .collect(Collectors.toList());
+    public PageableProductResponse getProducts(PageCriteria pageCriteria,
+                                               ProductCriteria productCriteria) {
+        var productPages = productRepository.findAll(new ProductSpecification(productCriteria),
+                PageRequest.of(pageCriteria.getPage(), pageCriteria.getCount()));
+
+        return mapToPageableResponse(productPages);
     }
+
 
     public void saveProduct(ProductRequest productRequest) {
         productRepository.save(buildProductEntity(productRequest));
@@ -69,6 +78,16 @@ public class ProductService {
                         () -> new RuntimeException("PRODUCT_NOT_FOUND")
                 );
 
+
+    }
+
+    private PageableProductResponse mapToPageableResponse(Page<ProductEntity> productEntityPage) {
+        return PageableProductResponse.builder()
+                .products(productEntityPage.getContent().stream().map(ProductMapper::buildProductResponse).collect(Collectors.toList()))
+                .totalElements(productEntityPage.getTotalPages())
+                .lastPages(productEntityPage.getTotalPages())
+                .hasNextPage(productEntityPage.hasNext())
+                .build();
 
     }
 
